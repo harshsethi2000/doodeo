@@ -5,7 +5,7 @@ const server = http.createServer(app);
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const artistAPI = require("./API/artistApi")();
-
+const connectToDB = require("./DBConnection/db")
 require("dotenv").config();
 const { API_PORT } = process.env;
 
@@ -15,6 +15,10 @@ let portNumber = process.env.API_PORT || 3001;
 server.listen(portNumber, async function () {
     console.log("Server is running on " + portNumber);
     app.use(bodyParser.json());
-    app.use("/api/artist/", artistAPI);
+    await connectToDB().catch((err) => {
+        console.log("Error while connecting to Mongoose " + err?.message);
+    });
 
+
+    app.use("/api/artist/", artistAPI);
 });
