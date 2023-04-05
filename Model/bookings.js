@@ -9,16 +9,12 @@ let status = [
 ];
 let booking = new mongoose.Schema(
   {
-    start_time: { type: String, index: true },
-    start_time_utc: { type: Date, index: true },
-    end_time: { type: String, index: true },
-    end_time_utc: { type: Date, index: true },
+    start_time_epoch: { type: Number, index: true },
+    end_time_epoch: { type: Number, index: true },
     user_id: { type: String, index: true },
     artist_id: { type: String, index: true },
     status: { type: String, enum: status },
     transaction_id: String,
-    provider_timezone: String,
-    consumer_timezone: String,
     meet_id: String,
   },
   { timestamps: true }
