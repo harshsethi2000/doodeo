@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../Controller/artistController")();
-//const auth = require("../Middleware/auth");
+const auth = require("../Middleware/auth");
 
 const userAPI = () => {
-    router.post("/registerArtist", userController.registerArtist);
+    router.post("/registerArtist",auth,userController.registerArtist);
 
 
     return router;

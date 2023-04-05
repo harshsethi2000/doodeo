@@ -3,39 +3,49 @@ const artist = require("../Model/artist");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-
+let userModel = require("../Model/artist");
 const artistService = () => {
     return {
-        // registerUserUtil: async (req) => {
-        //     let user = new userDetailsModel();
-        //     user.name = req?.body?.name?.trim();
-        //     user.age = req?.body?.age;
-        //     user.gender = req?.body?.gender?.trim();
-        //     user.contactNumber = req?.body?.contactNumber?.trim();
-        //     user.emailId = req?.body?.emailId?.trim();
-        //     user.password = req?.body?.password?.trim();
-        //     user.companyId = req?.body?.companyId?.trim();
-        //     user.companyName = req?.body?.companyName?.trim();
-        //
-        //     let email = user.emailId;
-        //     user.password = await bcrypt.hash(user.password, 10);
-        //     try {
-        //         savedUser = await user.save();
-        //     } catch (e) {
-        //         throw new Error("adding user error -->  " + e);
-        //     }
-        //
-        //     const token = jwt.sign({ user_id: savedUser._id, email }, process.env.TOKEN_KEY, {
-        //         expiresIn: "2h",
-        //     });
-        //     // save user token
-        //     let response = {};
-        //     response.createdProject = user.createdProject;
-        //     response.joinedProject = user.joinedProject;
-        //     response.token = token;
-        //     return { result: "User created ", data: response };
-        // },
-        //
+        registerUserUtil: async (userObj) => {
+            try {
+                let user = new userModel();
+                user.first_name = userObj?.fist_name?.trim();
+                user.last_name = userObj?.last_name?.trim();
+                user.contactNumber = userObj?.contactNumber?.trim();
+                user.emailId = userObj?.emailId?.trim();
+                user.role = userObj?.role;
+                let email = user.emailId;
+                // user.password = await bcrypt.hash(user.password, 10);
+                let savedUser;
+                console.log(user);
+                console.log("Here");
+                await user.save();
+                // try {
+                //     console.log("Check");
+                //     savedUser = await user.save();
+                //     console.log("Check2");
+                // } catch (e) {
+                //     throw new Error("adding user error -->  " + e);
+                // }
+                console.log("Heress");
+                const token = "ss";
+                // const token = jwt.sign({ user_id: savedUser._id, email }, process.env.TOKEN_KEY, {
+                //     expiresIn: "2h",
+                // });
+                // save user token
+                // let response = {};
+                // response.contactNumber = user.contactNumber;
+                // response.emailId = user.emailId;
+                // response.token = token;
+                //return {result: "User created ", data: response};
+            } catch (e) {
+
+            }
+        },
+        loginUserUtil : async (userId) => {
+
+        }
+
         // loginUserUtil: async (req) => {
         //     let emailId = req?.body?.emailId?.trim();
         //     let password = req?.body?.password?.trim();

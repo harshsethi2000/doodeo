@@ -5,17 +5,20 @@ mongoose.Promise = global.Promise;
 const role = ["user", "artist"];
 var artistSchema = new mongoose.Schema(
   {
-    name: String,
-    gender: String,
-    age: Number,
-    contactNumber: { type: String, unique: true },
-    emailId: { type: String, unique: true },
+      first_name : String,
+      last_name : String,
+      stage_name : String, //in artist only
+      session_price : Number,
+      offerings : [Object],
+    contactNumber: { type: String},
+    emailId: { type: String},
     companyId: String,
     companyName: String,
     genre: [String],
     role: { type: String, enums: role },
-    type: String,
+    type: String,//in artist only
     profileObj: {
+          pic : String,
       links: [
         {
           type: { type: String },
@@ -28,8 +31,4 @@ var artistSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-module.exports = mongoose.model(
-  "userDetailsModel",
-  artistSchema,
-  "userDetailsModel"
-);
+module.exports = mongoose.model("userModel", artistSchema);

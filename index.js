@@ -19,6 +19,5 @@ server.listen(portNumber, async function () {
         console.log("Error while connecting to Mongoose " + err?.message);
     });
 
-
     app.use("/api/artist/", artistAPI);
 });

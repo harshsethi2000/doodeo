@@ -2,57 +2,84 @@ const { json } = require("express");
 const express = require("express");
 const router = express.Router();
 //const userService = require("../Service/userService")();
-
+const artistService = require("../Service/artistService")();
 const userController = () => {
+    function validatePhoneNumber(phoneNumber) {
+        if(phoneNumber?.length != 10)
+            return false;
+        return true;
+    }
+    function validateEmail(email) {
+        return email.match(
+            "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/"
+        );
+    }
+    function validateUserRegistrationData(userObj) {
+        let validRole = {
+            user : "user",
+            artist : "artist",
+        }
+        let isAnyFieldInvalid = false;
+        let invalidDataObj = {
+        }
+        if(!userObj?.first_name) {
+            invalidDataObj.first_name = "First Name is mandatory Field";
+            isAnyFieldInvalid = true;
+        }
+        if(!userObj?.last_name) {
+            invalidDataObj.last_name = "Last Name is mandatory Field";
+            isAnyFieldInvalid = true;
+        }
+
+        if(!userObj?.contactNumber) {
+            invalidDataObj.contactNumber = "Phone Number is mandatory Field";
+            isAnyFieldInvalid = true;
+        }
+        else if(!validatePhoneNumber(userObj.contactNumber)) {
+            isAnyFieldInvalid = true;
+            invalidDataObj.contactNumber = "Invalid Phone Number";
+        }
+        if(!userObj?.email) {
+            invalidDataObj.email = "Email is mandatory Field";
+            isAnyFieldInvalid = true;
+        }
+        if(userObj?.role === validRole.artist) {
+            //validate for creator
+
+        }
+        let isUserDataInvalid = isAnyFieldInvalid;
+        return {isUserDataInvalid, invalidDataObj};
+    }
     return {
         registerArtist : async (req, res) => {
             console.log("Register Artist Got Invoked");
-        },
-        registerUser: async (req, res) => {
             try {
-                let user = {};
-                user.name = req?.body?.name?.trim();
-                user.age = req?.body?.age;
-                user.gender = req?.body?.gender?.trim();
-                user.contactNumber = req?.body?.contactNumber?.trim();
-                user.emailId = req?.body?.emailId?.trim();
-                user.password = req?.body?.password;
-                user.companyId = req?.body?.companyId;
-                user.companyName = req?.body?.companyName;
+                if(!req?.body?.user_obj)
+                    throw new Error("user_obj is mandatory for registration flow");
+                let { isUserDataInvalid, invalidDataObj} = validateUserRegistrationData(req?.body?.user_obj);
+                if(isUserDataInvalid) {
+                   return res.status(400).json({
+                       message : "Invalid Data",
+                       data : invalidDataObj
+                   })
+                }
 
-                if (!user?.name || user?.name?.length == 0)
-                    throw new Error("Name required");
-                if (!user?.age || user?.age < 18 || user.age > 65)
-                    throw new Error("age of user must be in between 18 to 85");
-                if (!user?.gender || user?.gender?.length == 0)
-                    throw new Error("gender required");
-                if (!user?.contactNumber || user?.contactNumber?.length != 10)
-                    throw new Error("size of mobile number should be 10");
-                if (!user?.emailId || user?.emailId?.length < 11)
-                    throw new Error("correct email required");
-                if (!user?.password || user?.password?.length == 0)
-                    throw new Error("Password required");
-                if (!user?.companyId || user?.companyId?.length == 0)
-                    throw new Error("companyId required");
-                if (!user?.companyName || user?.companyName?.length == 0)
-                    throw new Error("companyName required");
-
-                r = await userService.registerUserUtil(req);
-                return res.status(200).json({ message: r });
+                let registeredUser = await artistService.registerUserUtil(req?.body?.user_obj);
+                console.log("Sending Header " + JSON.stringify(registeredUser));
+                return res.status(200).json({ message: registeredUser });
             } catch (e) {
-                return res.status(400).json({ message: e.message });
+                console.log("Error while " + e?.message);
+                //return res.status(400).json({ message: e.message });
             }
         },
-
         loginUser: async (req, res) => {
             try {
-                let emailId = req?.body?.emailId?.trim();
+                let userId = req?.body?.userId?.trim();
+                let otp = req?.body?.otp;
+                if(!userId || !otp)
+                    throw new Error("Invalid User Id or otp");
                 let password = req?.body?.password?.trim();
-                if (!emailId || emailId?.length < 11)
-                    throw new Error("correct email required");
-                if (!password || password?.length == 0)
-                    throw new Error("Password required");
-                r = await userService.loginUserUtil(req);
+                r = await artistService.loginUserUtil(req);
                 return res.status(200).json({ message: r });
             } catch (e) {
                 return res.status(400).json({ message: e.message });
