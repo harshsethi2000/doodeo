@@ -25,6 +25,7 @@ var artistSchema = new mongoose.Schema(
     },
     otp: { type: String, default: "123456" },
     description: String,
+    timeZone: String,
   },
   { timestamps: true }
 );
